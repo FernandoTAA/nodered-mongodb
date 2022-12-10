@@ -1,0 +1,351 @@
+[
+    {
+        "id": "d2b1c5a61843e04e",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "4674519409a0bc44",
+        "type": "mongodb-configuration",
+        "hostname": "mongodb",
+        "topology": "direct",
+        "connectOptions": "",
+        "port": "27017",
+        "db": "mongodb",
+        "name": ""
+    },
+    {
+        "id": "2b7b59c09eb32761",
+        "type": "http in",
+        "z": "d2b1c5a61843e04e",
+        "name": "",
+        "url": "/person",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 170,
+        "y": 80,
+        "wires": [
+            [
+                "9131e9c0f44dc2c4"
+            ]
+        ]
+    },
+    {
+        "id": "1adaaa1f1e1d1fbd",
+        "type": "mongodb-read",
+        "z": "d2b1c5a61843e04e",
+        "server": "4674519409a0bc44",
+        "collection": "person",
+        "operation": "find",
+        "name": "Read",
+        "x": 970,
+        "y": 80,
+        "wires": [
+            [
+                "d4ddd1cabcac36a9"
+            ]
+        ]
+    },
+    {
+        "id": "d4ddd1cabcac36a9",
+        "type": "http response",
+        "z": "d2b1c5a61843e04e",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1280,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "9131e9c0f44dc2c4",
+        "type": "change",
+        "z": "d2b1c5a61843e04e",
+        "name": "set payload with query",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "req.query",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 420,
+        "y": 80,
+        "wires": [
+            [
+                "4b28ffac69054bcc"
+            ]
+        ]
+    },
+    {
+        "id": "f1d61fe45f753275",
+        "type": "http in",
+        "z": "d2b1c5a61843e04e",
+        "name": "",
+        "url": "/person",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 170,
+        "y": 180,
+        "wires": [
+            [
+                "ebdc7e4cedb16d51"
+            ]
+        ]
+    },
+    {
+        "id": "1d3f229c19d5d859",
+        "type": "mongodb-write",
+        "z": "d2b1c5a61843e04e",
+        "server": "4674519409a0bc44",
+        "name": "",
+        "collection": "person",
+        "payonly": true,
+        "upsert": false,
+        "multi": false,
+        "operation": "insertOne",
+        "x": 1040,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8bb6e51c4ec79358",
+        "type": "http response",
+        "z": "d2b1c5a61843e04e",
+        "name": "",
+        "statusCode": "201",
+        "headers": {},
+        "x": 1280,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "ebdc7e4cedb16d51",
+        "type": "function",
+        "z": "d2b1c5a61843e04e",
+        "name": "payload transform function",
+        "func": "if (msg.payload.birthdate) {\n    msg.payload.birthdate = new Date(msg.payload.birthdate)\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 180,
+        "wires": [
+            [
+                "1d3f229c19d5d859",
+                "8bb6e51c4ec79358"
+            ]
+        ]
+    },
+    {
+        "id": "4b28ffac69054bcc",
+        "type": "function",
+        "z": "d2b1c5a61843e04e",
+        "name": "ObjectId transform function",
+        "func": "if (msg.payload._id) {\n    var ObjectId = global.get('ObjectId');\n    msg.payload._id = ObjectId(msg.payload._id);\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 80,
+        "wires": [
+            [
+                "1adaaa1f1e1d1fbd"
+            ]
+        ]
+    },
+    {
+        "id": "3542475ad1b05a55",
+        "type": "http in",
+        "z": "d2b1c5a61843e04e",
+        "name": "",
+        "url": "/person/:_id",
+        "method": "put",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 280,
+        "wires": [
+            [
+                "cf29aa5ebbfa30f5"
+            ]
+        ]
+    },
+    {
+        "id": "0aa01d4635ca537f",
+        "type": "function",
+        "z": "d2b1c5a61843e04e",
+        "name": "update query function",
+        "func": "var ObjectId = global.get('ObjectId');\nmsg.query = {\n    _id: ObjectId(msg.req.params._id)\n};\nmsg.payload = {\n    \"$set\": msg.payload\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 280,
+        "wires": [
+            [
+                "27e30a0c6825d3d1",
+                "1ece3a56eef58abe"
+            ]
+        ]
+    },
+    {
+        "id": "8a86d97657351aa9",
+        "type": "http response",
+        "z": "d2b1c5a61843e04e",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1280,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "27e30a0c6825d3d1",
+        "type": "mongodb-write",
+        "z": "d2b1c5a61843e04e",
+        "server": "4674519409a0bc44",
+        "name": "",
+        "collection": "person",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "updateOne",
+        "x": 1040,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "cf29aa5ebbfa30f5",
+        "type": "function",
+        "z": "d2b1c5a61843e04e",
+        "name": "payload transform function",
+        "func": "if (msg.payload.birthdate) {\n    msg.payload.birthdate = new Date(msg.payload.birthdate)\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 280,
+        "wires": [
+            [
+                "0aa01d4635ca537f"
+            ]
+        ]
+    },
+    {
+        "id": "fa2c4c686c277c39",
+        "type": "http in",
+        "z": "d2b1c5a61843e04e",
+        "name": "",
+        "url": "/person/:_id",
+        "method": "delete",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 190,
+        "y": 380,
+        "wires": [
+            [
+                "b6b814949e215b6d"
+            ]
+        ]
+    },
+    {
+        "id": "b6b814949e215b6d",
+        "type": "function",
+        "z": "d2b1c5a61843e04e",
+        "name": "delete query function",
+        "func": "var ObjectId = global.get('ObjectId');\nmsg.payload = {\n    _id: ObjectId(msg.req.params._id)\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 380,
+        "wires": [
+            [
+                "1aa42f47620b503d",
+                "93a0503aa3f70708"
+            ]
+        ]
+    },
+    {
+        "id": "1aa42f47620b503d",
+        "type": "http response",
+        "z": "d2b1c5a61843e04e",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1280,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "1ece3a56eef58abe",
+        "type": "change",
+        "z": "d2b1c5a61843e04e",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.$set",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1000,
+        "y": 280,
+        "wires": [
+            [
+                "8a86d97657351aa9"
+            ]
+        ]
+    },
+    {
+        "id": "93a0503aa3f70708",
+        "type": "mongodb-write",
+        "z": "d2b1c5a61843e04e",
+        "server": "4674519409a0bc44",
+        "name": "",
+        "collection": "person",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "deleteOne",
+        "x": 1040,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    }
+]

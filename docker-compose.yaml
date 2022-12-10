@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+    nodered:
+        container_name: nodered
+        build:
+            dockerfile: Dockerfile
+            context: nodered
+        environment:
+            - FLOWS=flows/flows.json
+        volumes:
+            - ./nodered/:/data/flows/
+            - ./nodered/settings.js:/data/settings.js:ro
+        ports:
+            - "1880:1880"
+        networks:
+            - lan
+
+    mongodb:
+        container_name: mongodb
+        image: mongo:6.0.3
+        ports:
+            - '27017:27017'
+        volumes:
+            - mongodb:/data/db
+        networks:
+            - lan
+
+volumes:
+    mongodb:
+
+networks:
+    lan:
+        driver: bridge
