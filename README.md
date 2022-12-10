@@ -5,10 +5,6 @@ In this example, there is a docker-compose explaining how to use MongoDB CRUD in
 ## API 
 It is developed a person API using Richardson Maturity Model.
 
-## Infrastructure
-
-To start the application, it is required to have docker and docker-compose.
-
 | Action     | curl                                                                                                                                                                     |
 |------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | READ       | `curl --request GET 'http://localhost:1880/person'`                                                                                                                 |
@@ -16,6 +12,10 @@ To start the application, it is required to have docker and docker-compose.
 | CREATE     | `curl --request POST 'http://localhost:1880/person' --header 'Content-Type: application/json' --data-raw '{"name": "Jon Snow","birthdate": "1880-01-01"}'`          |
 | UPDATE     | `curl --request PUT 'http://localhost:1880/person/${id}' --header 'Content-Type: application/json' --data-raw '{"name": "Aegon Targaryen","birthdate": "1880-06-15"}'` |
 | DELETE     | `curl --request DELETE 'http://localhost:1880/person/${id}'`                                                                                                                                                                         |
+
+## Infrastructure
+
+To start the application, it is required to have docker and docker-compose.
 
 ### Up
 
